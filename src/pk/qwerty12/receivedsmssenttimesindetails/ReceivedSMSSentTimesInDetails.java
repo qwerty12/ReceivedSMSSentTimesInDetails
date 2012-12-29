@@ -25,11 +25,10 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 	{
 		//Based slightly on code from SMS Popup
 		long retval = 0;
-		Cursor cursor = context.getContentResolver().query(Uri.parse(SMS_INBOX_CONTENT_URI),
-														   new String[] { DATE_SENT },
-														   BASE_ID + " = " + msgId,
-														   null,
-														   null);
+		Cursor cursor = context.getContentResolver().query(Uri.parse(SMS_INBOX_CONTENT_URI), new String[] { DATE_SENT },
+								     BASE_ID + " = " + msgId, null,
+								     null);
+
 		if (cursor != null && cursor.getCount() == 1)
 		{
 			cursor.moveToFirst();
@@ -52,16 +51,15 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 					@Override
 					protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 						Cursor cursor = (Cursor) param.args[1];
-						if (cursor.getInt(cursor.getColumnIndexOrThrow(MESSAGE_TYPE)) == MESSAGE_TYPE_INBOX)
-						{
+						if (cursor.getInt(cursor.getColumnIndexOrThrow(MESSAGE_TYPE)) == MESSAGE_TYPE_INBOX) {
 							Context context = (Context) param.args[0];
 							final long date_sent = getSmsDateSent(context, cursor.getInt(cursor.getColumnIndexOrThrow(BASE_ID)));
-				            if (date_sent > 0) {
-				            	final Resources mmsResources = context.getResources();
-				            	String details = (String)param.getResult();
-				                details += "\n" + mmsResources.getString(mmsResources.getIdentifier("sent_label", "string", PACKAGE_MMS)) + " " + XposedHelpers.callStaticMethod(classMessageUtils, "formatTimeStampString", context, date_sent, true);
-				                param.setResult(details);
-				            }
+							if (date_sent > 0) {
+								final Resources mmsResources = context.getResources();
+								String details = (String)param.getResult();
+							    details += "\n" + mmsResources.getString(mmsResources.getIdentifier("sent_label", "string", PACKAGE_MMS)) + " " + XposedHelpers.callStaticMethod(classMessageUtils, "formatTimeStampString", context, date_sent, true);
+							    param.setResult(details);
+							}
 						}
 					}
 				});
