@@ -32,7 +32,7 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 		if (cursor != null && cursor.getCount() == 1)
 		{
 			cursor.moveToFirst();
-			retval = cursor.getLong(cursor.getColumnIndexOrThrow(DATE_SENT));
+			retval = cursor.getLong(cursor.getColumnIndex(DATE_SENT));
 		}
 		
 		cursor.close();
@@ -46,14 +46,13 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 			try {
 				final Class<?> classMessageUtils = XposedHelpers.findClass(PACKAGE_MMS + ".ui.MessageUtils", lpparam.classLoader);
 				XposedHelpers.findAndHookMethod(classMessageUtils, "getTextMessageDetails", Context.class, Cursor.class, boolean.class, PACKAGE_MMS + ".ui.MessageItem", Boolean.class,
-				
 				new XC_MethodHook() {
 					@Override
 					protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 						Cursor cursor = (Cursor) param.args[1];
-						if (cursor.getInt(cursor.getColumnIndexOrThrow(MESSAGE_TYPE)) == MESSAGE_TYPE_INBOX) {
+						if (cursor.getInt(cursor.getColumnIndex(MESSAGE_TYPE)) == MESSAGE_TYPE_INBOX) {
 							Context context = (Context) param.args[0];
-							final long date_sent = getSmsDateSent(context, cursor.getInt(cursor.getColumnIndexOrThrow(BASE_ID)));
+							final long date_sent = getSmsDateSent(context, cursor.getInt(cursor.getColumnIndex (BASE_ID)));
 							if (date_sent > 0) {
 								final Resources mmsResources = context.getResources();
 								String details = (String)param.getResult();
