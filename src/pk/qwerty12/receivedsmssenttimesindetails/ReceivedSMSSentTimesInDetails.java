@@ -21,21 +21,20 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 
 	private static final String SMS_INBOX_CONTENT_URI = "content://sms/inbox";
 
-	private static long getSmsDateSent(Context context, long msgId)
-	{
+	private static long getSmsDateSent(Context context, long msgId) {
 		//Based slightly on code from SMS Popup
 		long retval = 0;
 		Cursor cursor = context.getContentResolver().query(Uri.parse(SMS_INBOX_CONTENT_URI), new String[] { DATE_SENT },
 								     BASE_ID + " = " + msgId, null,
 								     null);
 
-		if (cursor != null && cursor.getCount() == 1)
-		{
-			cursor.moveToFirst();
-			retval = cursor.getLong(cursor.getColumnIndex(DATE_SENT));
+		if (cursor != null) {
+			if (cursor.getCount() == 1) {
+				cursor.moveToFirst();
+				retval = cursor.getLong(cursor.getColumnIndex(DATE_SENT));
+			}
+			cursor.close();
 		}
-		
-		cursor.close();
 
 		return retval;
 	}
@@ -56,15 +55,15 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 							if (date_sent > 0) {
 								final Resources mmsResources = context.getResources();
 								String details = (String)param.getResult();
-							    details += "\n" + mmsResources.getString(mmsResources.getIdentifier("sent_label", "string", PACKAGE_MMS)) + " " + XposedHelpers.callStaticMethod(classMessageUtils, "formatTimeStampString", context, date_sent, true);
-							    param.setResult(details);
+								details += "\n" + mmsResources.getString(mmsResources.getIdentifier("sent_label", "string", PACKAGE_MMS)) + " " + XposedHelpers.callStaticMethod(classMessageUtils, "formatTimeStampString", context, date_sent, true);
+								param.setResult(details);
 							}
 						}
 					}
 				});
 			} catch (Throwable t) { XposedBridge.log(t); }
 		}
-		
+
 	}
-	
+
 }
