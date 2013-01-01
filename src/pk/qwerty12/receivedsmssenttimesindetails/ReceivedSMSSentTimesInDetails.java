@@ -55,7 +55,7 @@ public class ReceivedSMSSentTimesInDetails implements IXposedHookLoadPackage {
 							if (date_sent > 0) {
 								final Resources mmsResources = context.getResources();
 								String details = (String)param.getResult();
-								details += "\n" + mmsResources.getString(mmsResources.getIdentifier("sent_label", "string", PACKAGE_MMS)) + " " + XposedHelpers.callStaticMethod(classMessageUtils, "formatTimeStampString", context, date_sent, true);
+								details += '\n' + mmsResources.getString(mmsResources.getIdentifier("sent_label", "string", PACKAGE_MMS)) + ' ' + XposedHelpers.callStaticMethod(classMessageUtils, "formatTimeStampString", context, date_sent, true);
 								param.setResult(details);
 							}
 						}
